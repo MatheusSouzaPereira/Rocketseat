@@ -15,13 +15,14 @@ app.get("/repositories", (request, response) => {
 });
 
 app.post("/repositories", (request, response) => {
-  const { title, url, techs } = request.body;
+  const { title, url, techs, likes } = request.body;
 
   const repositorie = {
     id: uuid(),
     title,
     url: "https://github.com/MatheusSouzaPereira/Rocketseat",
-    techs: [""],
+    techs,
+    likes: 0,
   };
 
   repositories.push(repositorie);
@@ -44,7 +45,8 @@ app.put("/repositories/:id", (request, response) => {
     id: uuid(),
     title,
     url: "https://github.com/MatheusSouzaPereira/Rocketseat",
-    techs: [""],
+    techs,
+    likes: repositories[repositorieIndex].likes,
   };
 
   repositories[repositorieIndex] = repositorie;
@@ -71,15 +73,15 @@ app.delete("/repositories/:id", (request, response) => {
 app.post("/repositories/:id/like", (request, response) => {
   const { id } = request.params;
 
-  const index = repositories.findIndex((obj) => obj.id == id);
+  const repositorieIndex = repositories.findIndex(
+    (repositorie) => repositorie.id === id
+  );
 
-  if (index < 0) {
+  if (repositorieIndex < 0) {
     return response.status(400).json({ mensage: "Repository not found" });
   }
 
-  let repository = repositories[index];
-  repository.likes = repository.likes + 1;
-  repositories[index] = repository;
+  repositories[repositorieIndex].likes++;
 
   return response.status(200).json(repository);
 });
